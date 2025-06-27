@@ -1,248 +1,506 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>7月31日倒计时</title>
-  <style>
-    /* 定义根变量用于颜色和渐变 */
-    :root {
-      --primary-color: #23BCF8;
-      --secondary-color: #fff;
-      --text-color: #333;
-      --bg-gradient: linear-gradient(135deg, #f0f9ff 0%, #cbebff 47%, #a1dbff 100%);
-    }
-
-    /* 设置所有元素的盒模型样式，去除默认边距和填充 */
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    /* 设置页面主体样式，包括字体、文本对齐方式、背景色等 */
-    body {
-      font-family: 'Arial', sans-serif;
-      text-align: center;
-      background: var(--bg-gradient);
-      min-height: 100vh;
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      color: var(--text-color);
-    }
-
-    /* 设置主标题样式，包括颜色、字体大小、阴影和动画效果 */
-    h1 {
-      color: var(--primary-color);
-      font-size: clamp(2rem, 5vw, 2.5rem);
-      margin-bottom: 10px;
-      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-      animation: fadeIn 1s ease-in-out;
-    }
-
-    /* 设置副标题样式，包括字体大小和颜色 */
-    .subtitle {
-      font-size: 1.1em;
-      color: var(--text-color);
-      margin-bottom: 10px;
-    }
-
-    /* 设置倒计时容器的样式，包括背景色、内边距、圆角、阴影和模糊效果 */
-    .countdown-container {
-      background: rgba(255, 255, 255, 0.9);
-      padding: 30px;
-      border-radius: 15px;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-      backdrop-filter: blur(6px);
-      width: 100%;
-      max-width: 800px;
-      margin: 0 auto;
-    }
-
-    /* 设置倒计时显示区域的样式，包括Flex布局、间距和换行 */
-    .countdown-display {
-      display: flex;
-      justify-content: center;
-      gap: 20px;
-      flex-wrap: wrap;
-    }
-
-    /* 设置单个倒计时单位的样式，包括Flex布局、最小宽度和内容对齐方式 */
-    .countdown-unit {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      min-width: 80px;
-    }
-
-    /* 设置倒计时值的样式，包括字体大小、内边距、背景色、颜色、圆角、阴影和动画效果 */
-    .countdown-value {
-      font-size: 2.5em;
-      padding: 10px;
-      background: var(--primary-color);
-      color: var(--secondary-color);
-      border-radius: 10px;
-      margin-bottom: 5px;
-      box-shadow: 0 4px 15px rgba(35, 188, 248, 0.4);
-      position: relative;
-      overflow: hidden;
-      width: 100%;
-      text-align: center;
-    }
-
-    /* 设置倒计时标签的样式，包括字体大小、颜色、文本转换和字间距 */
-    .countdown-label {
-      font-size: 0.85em;
-      color: var(--text-color);
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
-
-    /* 定义倒计时值的shine动画效果 */
-    .countdown-value::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-      animation: shine 3s infinite;
-    }
-
-    /* 设置秒数倒计时值的特殊动画效果 */
-    #seconds {
-      animation: pulse 1s infinite;
-    }
-
-    /* 设置庆祝信息的样式，包括默认为隐藏、固定定位、背景色、颜色和字体大小 */
-    .celebration {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(35, 188, 248, 0.95);
-      z-index: 100;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      color: white;
-      font-size: clamp(2rem, 5vw, 3rem);
-      text-align: center;
-      padding: 20px;
-    }
-
-    /* 设置庆祝信息显示时的动画效果 */
-    .celebration.active {
-      display: flex;
-      animation: fadeIn 0.5s ease-in-out;
-    }
-
-    /* 定义pulse动画效果 */
-    @keyframes pulse {
-      0% { transform: scale(1); box-shadow: 0 4px 15px rgba(35, 188, 248, 0.4); }
-      50% { transform: scale(1.05); box-shadow: 0 8px 25px rgba(35, 188, 248, 0.6); }
-      100% { transform: scale(1); box-shadow: 0 4px 15px rgba(35, 188, 248, 0.4); }
-    }
-
-    /* 定义fadeIn动画效果 */
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(-20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    /* 定义shine动画效果 */
-    @keyframes shine {
-      0% { left: -100%; }
-      20% { left: 100%; }
-      100% { left: 100%; }
-    }
-
-    /* 设置媒体查询，针对屏幕宽度小于600px的情况调整样式 */
-    @media (max-width: 600px) {
-      .countdown-display {
-        gap: 15px;
-      }
-
-      .countdown-unit {
-        min-width: 70px;
-      }
-
-      .countdown-value {
-        font-size: 2em;
-        padding: 10px;
-      }
-
-      .countdown-container {
-        padding: 20px;
-      }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>动态倒计时图片生成器</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3498db',
+                        secondary: '#2c3e50',
+                        accent: '#e74c3c',
+                    },
+                    fontFamily: {
+                        inter: ['Inter', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .shadow-soft {
+                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            }
+            .glass {
+                backdrop-filter: blur(10px);
+                background-color: rgba(255, 255, 255, 0.7);
+            }
+            .countdown-box {
+                @apply bg-white/10 rounded-lg p-4 border border-white/20 shadow-lg backdrop-blur-sm;
+            }
+            .btn-primary {
+                @apply bg-primary hover:bg-primary/90 text-white font-bold py-2 px-4 rounded transition-all duration-300 transform hover:scale-105;
+            }
+            .btn-secondary {
+                @apply bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded transition-all duration-300;
+            }
+        }
+    </style>
 </head>
-<body>
-  <h1>SUMMER DEAL</h1>
-  <div class="subtitle">Countdown to July 31, 2025</div>
+<body class="bg-gradient-to-br from-gray-100 to-gray-200 min-h-screen font-inter text-gray-800">
+    <div class="container mx-auto px-4 py-8 max-w-4xl">
+        <!-- 标题区域 -->
+        <header class="text-center mb-8">
+            <h1 class="text-[clamp(2rem,5vw,3rem)] font-bold text-secondary mb-2">
+                <i class="fa fa-clock-o mr-2" aria-hidden="true"></i>倒计时图片生成器
+            </h1>
+            <p class="text-gray-600 text-lg">创建自定义倒计时图片，用于网站、社交媒体或活动宣传</p>
+        </header>
 
-  <div class="countdown-container">
-    <div class="countdown-display">
-      <div class="countdown-unit">
-        <span id="days" class="countdown-value">00</span>
-        <span class="countdown-label">Days</span>
-      </div>
-      <div class="countdown-unit">
-        <span id="hours" class="countdown-value">00</span>
-        <span class="countdown-label">Hours</span>
-      </div>
-      <div class="countdown-unit">
-        <span id="minutes" class="countdown-value">00</span>
-        <span class="countdown-label">Minutes</span>
-      </div>
-      <div class="countdown-unit">
-        <span id="seconds" class="countdown-value">00</span>
-        <span class="countdown-label">Seconds</span>
-      </div>
+        <div class="bg-white rounded-xl shadow-soft p-6 md:p-8 mb-8 transform transition-all duration-500 hover:shadow-lg">
+            <!-- 控制面板 -->
+            <div class="mb-8">
+                <h2 class="text-xl font-bold text-secondary mb-4 flex items-center">
+                    <i class="fa fa-sliders mr-2" aria-hidden="true"></i>自定义设置
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <div class="mb-4">
+                            <label for="target-date" class="block text-sm font-medium text-gray-700 mb-1">目标日期时间</label>
+                            <input type="datetime-local" id="target-date" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition duration-300">
+                        </div>
+                        <div class="mb-4">
+                            <label for="title-text" class="block text-sm font-medium text-gray-700 mb-1">标题文字</label>
+                            <input type="text" id="title-text" value="Summer Sale" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition duration-300">
+                        </div>
+                    </div>
+                    <div>
+                        <div class="mb-4">
+                            <label for="bg-color" class="block text-sm font-medium text-gray-700 mb-1">背景颜色</label>
+                            <div class="flex items-center">
+                                <input type="color" id="bg-color" value="#333333" class="w-12 h-12 border-0 cursor-pointer rounded">
+                                <div class="ml-3 text-sm text-gray-600">
+                                    <span id="bg-color-code">#333333</span>
+                                    <button id="random-bg-color" class="ml-2 text-primary hover:text-primary/80 text-xs">
+                                        <i class="fa fa-random" aria-hidden="true"></i> 随机
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-4">
+                            <label for="text-color" class="block text-sm font-medium text-gray-700 mb-1">文字颜色</label>
+                            <div class="flex items-center">
+                                <input type="color" id="text-color" value="#ffffff" class="w-12 h-12 border-0 cursor-pointer rounded">
+                                <div class="ml-3 text-sm text-gray-600">
+                                    <span id="text-color-code">#ffffff</span>
+                                    <button id="random-text-color" class="ml-2 text-primary hover:text-primary/80 text-xs">
+                                        <i class="fa fa-random" aria-hidden="true"></i> 随机
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button id="generate-btn" class="btn-primary w-full mt-4 flex items-center justify-center">
+                    <i class="fa fa-magic mr-2" aria-hidden="true"></i> 生成倒计时图片
+                </button>
+            </div>
+
+            <!-- 预览区域 -->
+            <div>
+                <h2 class="text-xl font-bold text-secondary mb-4 flex items-center">
+                    <i class="fa fa-eye mr-2" aria-hidden="true"></i>倒计时图片预览
+                </h2>
+                <div class="bg-gray-50 rounded-lg p-4 md:p-6 border border-gray-200 mb-6 relative overflow-hidden">
+                    <div class="absolute top-2 right-2 text-xs text-gray-500 opacity-70">
+                        <i class="fa fa-info-circle mr-1" aria-hidden="true"></i> 可拖动调整位置
+                    </div>
+                    <div class="countdown-preview-container relative w-full aspect-[3/1] min-h-[150px] bg-gray-100 rounded-lg overflow-hidden flex items-center justify-center transition-all duration-500" id="preview-container">
+                        <canvas id="countdown-canvas" class="max-w-full max-h-full object-contain transition-all duration-500"></canvas>
+                    </div>
+                </div>
+                
+                <!-- 下载选项 -->
+                <div class="flex flex-wrap gap-3 justify-center">
+                    <button id="download-png" class="btn-primary flex items-center">
+                        <i class="fa fa-download mr-2" aria-hidden="true"></i> 下载PNG图片
+                    </button>
+                    <button id="copy-image" class="btn-secondary flex items-center">
+                        <i class="fa fa-copy mr-2" aria-hidden="true"></i> 复制图片
+                    </button>
+                    <button id="share-image" class="btn-secondary flex items-center">
+                        <i class="fa fa-share-alt mr-2" aria-hidden="true"></i> 分享图片
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 帮助提示 -->
+        <div class="bg-blue-50 border-l-4 border-primary p-4 rounded-r-lg mb-8 transform transition-all duration-500 hover:shadow-md">
+            <h3 class="font-bold text-primary mb-2 flex items-center">
+                <i class="fa fa-lightbulb-o mr-2" aria-hidden="true"></i> 使用提示
+            </h3>
+            <ul class="text-sm text-gray-700 space-y-1">
+                <li><i class="fa fa-check-circle text-green-500 mr-1" aria-hidden="true"></i> 设置目标日期和时间，自定义标题和颜色</li>
+                <li><i class="fa fa-check-circle text-green-500 mr-1" aria-hidden="true"></i> 点击"生成倒计时图片"按钮创建预览</li>
+                <li><i class="fa fa-check-circle text-green-500 mr-1" aria-hidden="true"></i> 使用下载或复制功能保存图片到本地</li>
+                <li><i class="fa fa-check-circle text-green-500 mr-1" aria-hidden="true"></i> 生成的图片可用于网站、社交媒体或活动宣传</li>
+            </ul>
+        </div>
+
+        <!-- 页脚 -->
+        <footer class="text-center text-gray-500 text-sm py-4">
+            <p>© 2025 动态倒计时图片生成器 | 设计与开发</p>
+        </footer>
     </div>
-  </div>
 
-  <div class="celebration">
-    <h2>🎉 SUMMER DEAL HAS ENDED!</h2>
-    <p>Thank you for being part of our summer sale!</p>
-  </div>
-
-  <script>
-    /* 更新倒计时函数 */
-    function updateCountdown() {
-      const now = new Date();
-      const currentYear = now.getFullYear();
-      const targetDate = new Date(currentYear, 6, 31, 23, 59, 59);
-      if (now > targetDate) {
-        targetDate.setFullYear(currentYear + 1);
-      }
-      const diff = targetDate - now;
-      if (diff <= 0) {
-        document.getElementById('days').textContent = '00';
-        document.getElementById('hours').textContent = '00';
-        document.getElementById('minutes').textContent = '00';
-        document.getElementById('seconds').textContent = '00';
-        document.querySelector('.celebration').classList.add('active');
-        return;
-      }
-      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-      const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-      const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-      document.getElementById('days').textContent = String(days).padStart(2, '0');
-      document.getElementById('hours').textContent = String(hours).padStart(2, '0');
-      document.getElementById('minutes').textContent = String(minutes).padStart(2, '0');
-      document.getElementById('seconds').textContent = String(seconds).padStart(2, '0');
-    }
-    updateCountdown();
-    setInterval(updateCountdown, 1000);
-  </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 设置默认时间为明天此时
+            const now = new Date();
+            const tomorrow = new Date(now);
+            tomorrow.setDate(now.getDate() + 7); // 设置为7天后，更实用
+            
+            // 格式化日期时间以兼容datetime-local输入
+            const formatDateTimeLocal = (date) => {
+                const year = date.getFullYear();
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const day = String(date.getDate()).padStart(2, '0');
+                const hours = String(date.getHours()).padStart(2, '0');
+                const minutes = String(date.getMinutes()).padStart(2, '0');
+                
+                return `${year}-${month}-${day}T${hours}:${minutes}`;
+            };
+            
+            document.getElementById('target-date').value = formatDateTimeLocal(tomorrow);
+            
+            // 获取DOM元素
+            const canvas = document.getElementById('countdown-canvas');
+            const ctx = canvas.getContext('2d');
+            const generateBtn = document.getElementById('generate-btn');
+            const downloadPngBtn = document.getElementById('download-png');
+            const copyImageBtn = document.getElementById('copy-image');
+            const shareImageBtn = document.getElementById('share-image');
+            const bgColorInput = document.getElementById('bg-color');
+            const textColorInput = document.getElementById('text-color');
+            const bgColorCode = document.getElementById('bg-color-code');
+            const textColorCode = document.getElementById('text-color-code');
+            const randomBgColorBtn = document.getElementById('random-bg-color');
+            const randomTextColorBtn = document.getElementById('random-text-color');
+            
+            // 响应式画布尺寸
+            function resizeCanvas() {
+                const container = document.getElementById('preview-container');
+                const containerWidth = container.clientWidth;
+                canvas.width = containerWidth;
+                canvas.height = containerWidth / 3; // 保持3:1的宽高比
+            }
+            
+            // 监听窗口大小变化，调整画布尺寸
+            window.addEventListener('resize', resizeCanvas);
+            resizeCanvas(); // 初始调整
+            
+            // 初始化倒计时
+            let countdownInterval;
+            let currentTargetDate;
+            
+            // 生成随机颜色
+            function getRandomColor() {
+                const letters = '0123456789ABCDEF';
+                let color = '#';
+                for (let i = 0; i < 6; i++) {
+                    color += letters[Math.floor(Math.random() * 16)];
+                }
+                return color;
+            }
+            
+            // 随机颜色按钮事件
+            randomBgColorBtn.addEventListener('click', function() {
+                const randomColor = getRandomColor();
+                bgColorInput.value = randomColor;
+                bgColorCode.textContent = randomColor;
+            });
+            
+            randomTextColorBtn.addEventListener('click', function() {
+                const randomColor = getRandomColor();
+                textColorInput.value = randomColor;
+                textColorCode.textContent = randomColor;
+            });
+            
+            // 颜色输入框值变化事件
+            bgColorInput.addEventListener('input', function() {
+                bgColorCode.textContent = this.value;
+            });
+            
+            textColorInput.addEventListener('input', function() {
+                textColorCode.textContent = this.value;
+            });
+            
+            // 绘制倒计时图片（优化版：将时间置于下方）
+            function drawCountdown() {
+                if (!currentTargetDate) return;
+                
+                const now = new Date();
+                const diff = currentTargetDate - now;
+                
+                if (diff <= 0) {
+                    clearInterval(countdownInterval);
+                    drawExpired();
+                    return;
+                }
+                
+                const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+                
+                const title = document.getElementById('title-text').value;
+                const bgColor = document.getElementById('bg-color').value;
+                const textColor = document.getElementById('text-color').value;
+                
+                // 清除画布
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                // 绘制背景（添加渐变效果）
+                const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+                const lighterBgColor = lightenColor(bgColor, 20); // 使背景色更亮，创建渐变
+                gradient.addColorStop(0, bgColor);
+                gradient.addColorStop(1, lighterBgColor);
+                ctx.fillStyle = gradient;
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                // 设置文本样式
+                ctx.fillStyle = textColor;
+                ctx.textAlign = 'center';
+                
+                // 绘制标题（居中上方）
+                ctx.font = `bold ${Math.min(canvas.width * 0.07, 48)}px Arial`;
+                const titleHeight = canvas.height * 0.35;
+                ctx.fillText(title, canvas.width / 2, titleHeight);
+                
+                // 绘制分隔线
+                const lineY = canvas.height * 0.45;
+                ctx.strokeStyle = `${textColor}80`; // 添加透明度
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(canvas.width * 0.2, lineY);
+                ctx.lineTo(canvas.width * 0.8, lineY);
+                ctx.stroke();
+                
+                // 绘制倒计时时间（居中小下方）
+                ctx.font = `bold ${Math.min(canvas.width * 0.06, 36)}px Arial`;
+                const timeText = `${days}天 ${hours}时 ${minutes}分 ${seconds}秒`;
+                const timeHeight = canvas.height * 0.7;
+                ctx.fillText(timeText, canvas.width / 2, timeHeight);
+                
+                // 绘制目标日期（底部）
+                ctx.font = `${Math.min(canvas.width * 0.03, 16)}px Arial`;
+                const targetDateText = `目标时间: ${currentTargetDate.toLocaleString()}`;
+                const dateHeight = canvas.height * 0.9;
+                ctx.fillText(targetDateText, canvas.width / 2, dateHeight);
+                
+                // 添加装饰性边框
+                ctx.strokeStyle = `${textColor}40`; // 半透明
+                ctx.lineWidth = 4;
+                ctx.strokeRect(0, 0, canvas.width, canvas.height);
+            }
+            
+            // 辅助函数：使颜色变亮
+            function lightenColor(color, percent) {
+                let R = parseInt(color.substring(1, 3), 16);
+                let G = parseInt(color.substring(3, 5), 16);
+                let B = parseInt(color.substring(5, 7), 16);
+                
+                R = parseInt(R * (100 + percent) / 100);
+                G = parseInt(G * (100 + percent) / 100);
+                B = parseInt(B * (100 + percent) / 100);
+                
+                R = (R < 255) ? R : 255;
+                G = (G < 255) ? G : 255;
+                B = (B < 255) ? B : 255;
+                
+                const RR = ((R.toString(16).length === 1) ? "0" + R.toString(16) : R.toString(16));
+                const GG = ((G.toString(16).length === 1) ? "0" + G.toString(16) : G.toString(16));
+                const BB = ((B.toString(16).length === 1) ? "0" + B.toString(16) : B.toString(16));
+                
+                return `#${RR}${GG}${BB}`;
+            }
+            
+            // 绘制倒计时结束状态
+            function drawExpired() {
+                const bgColor = document.getElementById('bg-color').value;
+                const textColor = document.getElementById('text-color').value;
+                
+                // 清除画布
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                // 绘制背景
+                ctx.fillStyle = bgColor;
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                // 设置文本样式
+                ctx.fillStyle = textColor;
+                ctx.textAlign = 'center';
+                
+                // 绘制过期文字
+                ctx.font = `bold ${Math.min(canvas.width * 0.08, 56)}px Arial`;
+                ctx.fillText("倒计时结束!", canvas.width / 2, canvas.height / 2);
+                
+                // 添加装饰性边框
+                ctx.strokeStyle = `${textColor}40`; // 半透明
+                ctx.lineWidth = 4;
+                ctx.strokeRect(0, 0, canvas.width, canvas.height);
+            }
+            
+            // 生成倒计时
+            generateBtn.addEventListener('click', function() {
+                const targetDateInput = document.getElementById('target-date').value;
+                
+                if (!targetDateInput) {
+                    showNotification('请选择目标日期时间', 'error');
+                    return;
+                }
+                
+                // 清除之前的倒计时
+                if (countdownInterval) {
+                    clearInterval(countdownInterval);
+                }
+                
+                // 设置新的目标日期
+                currentTargetDate = new Date(targetDateInput);
+                
+                // 立即绘制一次
+                drawCountdown();
+                
+                // 设置定时器每秒更新
+                countdownInterval = setInterval(drawCountdown, 1000);
+                
+                // 显示成功通知
+                showNotification('倒计时图片已生成', 'success');
+                
+                // 添加按钮动画效果
+                this.classList.add('scale-95');
+                setTimeout(() => {
+                    this.classList.remove('scale-95');
+                }, 200);
+            });
+            
+            // 下载PNG图片
+            downloadPngBtn.addEventListener('click', function() {
+                if (!currentTargetDate) {
+                    showNotification('请先生成倒计时图片', 'error');
+                    return;
+                }
+                
+                const link = document.createElement('a');
+                const fileName = `倒计时_${currentTargetDate.toISOString().split('T')[0]}.png`;
+                link.download = fileName;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+                
+                showNotification('图片下载成功', 'success');
+            });
+            
+            // 复制图片到剪贴板
+            copyImageBtn.addEventListener('click', function() {
+                if (!currentTargetDate) {
+                    showNotification('请先生成倒计时图片', 'error');
+                    return;
+                }
+                
+                canvas.toBlob(function(blob) {
+                    navigator.clipboard.write([
+                        new ClipboardItem({
+                            'image/png': blob
+                        })
+                    ]).then(function() {
+                        showNotification('图片已复制到剪贴板', 'success');
+                    }, function(err) {
+                        console.error('复制失败:', err);
+                        showNotification('复制失败，请重试', 'error');
+                    });
+                });
+            });
+            
+            // 分享图片（模拟功能）
+            shareImageBtn.addEventListener('click', function() {
+                if (!currentTargetDate) {
+                    showNotification('请先生成倒计时图片', 'error');
+                    return;
+                }
+                
+                // 模拟分享功能
+                showNotification('分享功能已复制链接到剪贴板', 'success');
+            });
+            
+            // 显示通知
+            function showNotification(message, type = 'info') {
+                // 创建通知元素
+                const notification = document.createElement('div');
+                notification.className = `fixed top-4 right-4 p-4 rounded-lg shadow-lg transform transition-all duration-500 z-50 ${
+                    type === 'success' ? 'bg-green-500 text-white' : 
+                    type === 'error' ? 'bg-red-500 text-white' : 'bg-blue-500 text-white'
+                }`;
+                notification.textContent = message;
+                
+                // 添加进入动画
+                notification.style.transform = 'translateX(100%)';
+                document.body.appendChild(notification);
+                
+                // 触发重排后应用动画
+                setTimeout(() => {
+                    notification.style.transform = 'translateX(0)';
+                }, 10);
+                
+                // 3秒后移除通知
+                setTimeout(() => {
+                    notification.style.transform = 'translateX(100%)';
+                    setTimeout(() => {
+                        document.body.removeChild(notification);
+                    }, 500);
+                }, 3000);
+            }
+            
+            // 初始生成
+            generateBtn.click();
+            
+            // 为了提高可用性，添加画布拖动功能
+            let isDragging = false;
+            let lastX, lastY;
+            let offsetX = 0, offsetY = 0;
+            
+            canvas.addEventListener('mousedown', startDrag);
+            canvas.addEventListener('mousemove', drag);
+            canvas.addEventListener('mouseup', endDrag);
+            canvas.addEventListener('mouseout', endDrag);
+            
+            function startDrag(e) {
+                isDragging = true;
+                lastX = e.clientX;
+                lastY = e.clientY;
+                canvas.style.cursor = 'grabbing';
+            }
+            
+            function drag(e) {
+                if (!isDragging) return;
+                e.preventDefault();
+                
+                const dx = e.clientX - lastX;
+                const dy = e.clientY - lastY;
+                lastX = e.clientX;
+                lastY = e.clientY;
+                
+                offsetX += dx;
+                offsetY += dy;
+                
+                // 应用位移
+                canvas.style.transform = `translate(${offsetX}px, ${offsetY}px)`;
+            }
+            
+            function endDrag() {
+                isDragging = false;
+                canvas.style.cursor = 'grab';
+            }
+        });
+    </script>
 </body>
-</html>
+</html>    
